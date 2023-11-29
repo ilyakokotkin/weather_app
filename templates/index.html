@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>F to C</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif; 
+        }
+        #weather {
+            font-size: 2em; 
+            margin-top: 20vh; 
+            font-weight: bold; 
+        }
+       
+    </style>
+</head>
+<body>
+    <h1>°F to °C</h1>
+    <p id="weather"></p>
+
+    <script>
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showWeather, showError);
+            } else { 
+                document.getElementById("weather").innerHTML = "Geolocation is not supported by this browser.";
+            }
+        }
+
+        function showWeather(position) {
+            fetch(`/weather?lat=${position.coords.latitude}&lon=${position.coords.longitude}`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("weather").innerHTML = `${data.location}<br> ${data.temperature_c}°C / ${data.temperature_f}°F`;
+            });
+        }
+
+        function showError(error) {
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                    document.getElementById("weather").innerHTML = "User denied the request for Geolocation."
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    document.getElementById("weather").innerHTML = "Location information is unavailable."
+                    break;
+                case error.TIMEOUT:
+                    document.getElementById("weather").innerHTML = "The request to get user location timed out."
+                    break;
+                case error.UNKNOWN_ERROR:
+                    document.getElementById("weather").innerHTML = "An unknown error occurred."
+                    break;
+            }
+        }
+
+        window.onload = getLocation;
+    </script>
+</body>
+</html>
